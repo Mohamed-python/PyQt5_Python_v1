@@ -1,37 +1,36 @@
+import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QPushButton
 
-from PyQt5.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget
-from PyQt5.QtCore import QTimer, QTime
-
-class MyWindow(QWidget):
+class SideWindow(QWidget):
     def __init__(self):
         super().__init__()
-        
-        self.setup_ui()
-        self.start_timer()
-    
-    def setup_ui(self):
-        self.label = QLabel()
         layout = QVBoxLayout()
-        layout.addWidget(self.label)
+        button = QPushButton('Close Side Window', self)
+        button.clicked.connect(self.close)
+        layout.addWidget(button)
         self.setLayout(layout)
-        
-    def start_timer(self):
-        timer = QTimer(self)
-        timer.timeout.connect(self.update_time)
-        timer.start(1000)  # تحديد 1000 ميلي ثانية (1 ثانية) كفاصل زمني للإشارة
-    
-    def update_time(self):
-        current_time = QTime.currentTime()
-        time_text = current_time.toString('hh:mm:ss')
-        self.label.setText(time_text)
+        self.setWindowTitle('Side Window')
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+
+    def initUI(self):
+        self.setGeometry(100, 100, 800, 600)
+        self.setWindowTitle('Main Window')
+
+        # إنشاء زر لفتح النافذة الجانبية
+        side_button = QPushButton('Open Side Window', self)
+        side_button.clicked.connect(self.openSideWindow)
+        self.setCentralWidget(side_button)
+
+    def openSideWindow(self):
+        self.side_window = SideWindow()
+        self.side_window.show()
 
 if __name__ == '__main__':
-    app = QApplication([])
-    window1 = MyWindow()
-    window1.show()
-    
-    window2 = MyWindow()
-    window2.show()
-    
-    app.exec_()
-
+    app = QApplication(sys.argv)
+    mainWindow = MainWindow()
+    mainWindow.show()
+    sys.exit(app.exec_())
